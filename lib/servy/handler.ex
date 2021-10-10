@@ -6,6 +6,7 @@ defmodule Servy.Handler do
 
   import Servy.Plugins
   import Servy.Parser, only: [parse: 1]
+  import Servy.FileHandler, only: [handle_file: 2]
 
   @doc "Transforms the request into a response."
   def handle(request) do
@@ -62,18 +63,6 @@ defmodule Servy.Handler do
       |> Path.join(file <> ".html")
       |> File.read
       |> handle_file(conv)
-  end
-
-  def handle_file({:ok, content}, conv) do
-    %{ conv | status: 200, resp_body: content }
-  end
-
-  def handle_file({:error, :enoent}, conv) do
-    %{ conv | status: 404, resp_body: "File not found!" }
-  end
-
-  def handle_file({:error, reason}, conv) do
-    %{ conv | status: 500, resp_body: "File error: #{reason}" }
   end
 
   def route(%{path: path} = conv) do
